@@ -15,6 +15,17 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
+console.log(``)
+
+function GameObject(attr) {
+  this.createdAt = attr.createdAt;
+  this.name = attr.name;
+  this.dimensions = attr.dimensions;
+}
+
+GameObject.prototype.destroy =  function () {
+  return `${this.name} was removed from the game`
+}
 
 /*
   === CharacterStats ===
@@ -22,6 +33,16 @@
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+
+function CharacterStats(attr) {
+  GameObject.call(this, attr)
+  this.healthPoints = attr.healthPoints;
+}
+
+CharacterStats.prototype = Object.create(GameObject.prototype);
+CharacterStats.prototype.takeDamage = function () {
+  return `${this.name} took damage, their health is now ${this.healthPoints - 1}`
+}
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -32,7 +53,19 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
- 
+
+function Humanoid(attr) {
+  CharacterStats.call(this, attr)
+  this.team = attr.team;
+  this.weapons = attr.weapons;
+  this.language = attr.language;
+}
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+Humanoid.prototype.greet = function () {
+  return `${this.name} offers a greeting in ${this.language}`
+}
+
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -41,7 +74,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -102,9 +135,134 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+  const rng = function () {
+    const number = Math.floor(Math.random() * 11) + 1;
+    if(number <= 5) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function Villain(attr) {
+    Humanoid.call(this, attr)
+  }
+  
+  Villain.prototype = Object.create(Humanoid.prototype);
+  Villain.prototype.attackVillain = function (obj) {
+    let healthVillain = obj.healthPoints;
+
+    if(healthVillain < 0) {
+      return ``
+    }
+    if(this.healthPoints <= 0) {
+      return document.getElementById("villainText").innerHTML =  `You can't attack, you have died!`
+    }
+    if(rng() == true) {
+      obj.healthPoints = healthVillain - 2;
+    } 
+    else {
+      obj.healthPoints = healthVillain - 1;
+    }
+
+    if(obj.healthPoints < 0) {
+      return document.getElementById("villainText").innerHTML = `Oh no! ${obj.name} has been destroyed by ${this.name}.`
+    }
+    else {
+      return document.getElementById("villainText").innerHTML = `${obj.name} has taken damage from ${this.name}, they now have ${healthVillain} health.`
+    }
+  }
+
+  function Hero(attr) {
+    Humanoid.call(this, attr)
+  }
+  
+  Hero.prototype = Object.create(Humanoid.prototype);
+  Hero.prototype.attackHero = function (obj) {
+    let healthHero = obj.healthPoints;
+    if(healthHero < 0) {
+      return ``
+    }
+    if(this.healthPoints <= 0) {
+      return document.getElementById("heroText").innerHTML = `You can't attack, you have died!`
+    }
+    if(rng() == true) {
+      obj.healthPoints = healthHero - 2;
+    } 
+    else {
+      obj.healthPoints = healthHero - 1;
+    }
+
+    if(obj.healthPoints <= 0) {
+      return document.getElementById("heroText").innerHTML = `Oh no! ${obj.name} has been destroyed by ${this.name}.`
+    }
+    else {
+      return document.getElementById("heroText").innerHTML = `${obj.name} has taken damage from ${this.name}, they now have ${healthHero} health.`
+    }
+
+  }
+
+  const archerVillain = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 2,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Villain',
+    team: 'Forest Kingdom',
+    weapons: [
+      'Bow',
+      'Dagger',
+    ],
+    language: 'Elvish',
+  });
+
+  const archerHero = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 2,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Hero',
+    team: 'Forest Kingdom',
+    weapons: [
+      'Bow',
+      'Dagger',
+    ],
+    language: 'Elvish',
+  });
+
+  document.getElementById("demo").innerHTML = archerHero.attackHero(archerVillain);
+  // const fightLoop = function (hero,villain) {
+
+  // }
+
+
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
+  // console.log(archerVillain.attackVillain(archerHero));
+  // console.log(archerHero.attackHero(archerVillain));
