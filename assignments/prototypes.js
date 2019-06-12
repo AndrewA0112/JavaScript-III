@@ -159,7 +159,6 @@ Humanoid.prototype.greet = function () {
   Villain.prototype = Object.create(Humanoid.prototype);
   Villain.prototype.attackVillain = function (obj) {
     let healthVillain = obj.healthPoints;
-
     if(healthVillain < 0) {
       return ``
     }
@@ -174,7 +173,7 @@ Humanoid.prototype.greet = function () {
     }
 
     if(obj.healthPoints < 0) {
-      return document.getElementById("villainText").innerHTML = `Oh no! ${obj.name} has been destroyed by ${this.name}.`
+      return document.getElementById("villainText").innerHTML = `You have destroyed ${obj.name}.`
     }
     else {
       return document.getElementById("villainText").innerHTML = `${obj.name} has taken damage from ${this.name}, they now have ${healthVillain} health.`
@@ -202,7 +201,7 @@ Humanoid.prototype.greet = function () {
     }
 
     if(obj.healthPoints <= 0) {
-      return document.getElementById("heroText").innerHTML = `Oh no! ${obj.name} has been destroyed by ${this.name}.`
+      return document.getElementById("heroText").innerHTML = `You have destroyed ${obj.name}.`
     }
     else {
       return document.getElementById("heroText").innerHTML = `${obj.name} has taken damage from ${this.name}, they now have ${healthHero} health.`
